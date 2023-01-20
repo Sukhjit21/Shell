@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #define CMDLINE_MAX 512
 
@@ -11,7 +13,9 @@ int main(void)
 
         while (1) {
                 char *nl;
-                int retval;
+                //int retval;
+                int status;
+                int idfork;
                 /* Print prompt */
                 printf("sshell$ ");
                 fflush(stdout);
@@ -36,10 +40,19 @@ int main(void)
                         break;
                 }
 
-                /* Regular command */
-                retval = system(cmd);
-                fprintf(stdout, "Return status value for '%s': '%d'\n",
-                        cmd,retval );
+
+                char* argument_list[] = {NULL};
+		idfork = fork();
+                wait(&status);
+                /*Child Process*/
+		if(idfork == 0){
+			status = execvp(cmd, argument_list);
+		}
+                /* Parent Process */
+                else{
+                        fprintf(stderr, "+ completed '%s' ['%d']\n",
+                        cmd,status);
+                }
         }
 
         return EXIT_SUCCESS;
