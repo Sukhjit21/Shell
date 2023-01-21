@@ -7,7 +7,7 @@
 
 #define CMDLINE_MAX 512
 
-int main(void)
+int main(int argc, char *argv[])
 {
         char cmd[CMDLINE_MAX];
 
@@ -16,6 +16,27 @@ int main(void)
                 //int retval;
                 int status;
                 int idfork;
+
+                if(argc > 1) {
+                        strcpy(cmd,argv[1]);
+                        for(int i=2;i<argc;i++){
+                                strcat(cmd," ");
+                                strcat(cmd,argv[i]);
+                        }
+                        char* argument_list[] = {NULL};
+                        idfork = fork();
+                        wait(&status);
+                        /* Child Process */
+                        if (idfork == 0) {
+                                status = execvp(cmd, argument_list);
+                        }
+                        /* Parent Process */
+                        else {
+                                fprintf(stderr, "+ completed '%s' ['%d']\n", cmd, status);
+                        }
+                        break;
+                }
+
                 /* Print prompt */
                 printf("sshell$ ");
                 fflush(stdout);
@@ -40,18 +61,16 @@ int main(void)
                         break;
                 }
 
-
                 char* argument_list[] = {NULL};
-		idfork = fork();
+                idfork = fork();
                 wait(&status);
-                /*Child Process*/
-		if(idfork == 0){
-			status = execvp(cmd, argument_list);
-		}
+                /* Child Process */
+                if (idfork == 0) {
+                        status = execvp(cmd, argument_list);
+                }
                 /* Parent Process */
-                else{
-                        fprintf(stderr, "+ completed '%s' ['%d']\n",
-                        cmd,status);
+                else {
+                        fprintf(stderr, "+ completed '%s' ['%d']\n", cmd, status);
                 }
         }
 
