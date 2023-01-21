@@ -17,26 +17,6 @@ int main(int argc, char *argv[])
                 int status;
                 int idfork;
 
-                if(argc > 1) {
-                        strcpy(cmd,argv[1]);
-                        for(int i=2;i<argc;i++){
-                                strcat(cmd," ");
-                                strcat(cmd,argv[i]);
-                        }
-                        char* argument_list[] = {NULL};
-                        idfork = fork();
-                        wait(&status);
-                        /* Child Process */
-                        if (idfork == 0) {
-                                status = execvp(cmd, argument_list);
-                        }
-                        /* Parent Process */
-                        else {
-                                fprintf(stderr, "+ completed '%s' ['%d']\n", cmd, status);
-                        }
-                        break;
-                }
-
                 /* Print prompt */
                 printf("sshell$ ");
                 fflush(stdout);
@@ -61,16 +41,24 @@ int main(int argc, char *argv[])
                         break;
                 }
 
-                char* argument_list[] = {NULL};
-                idfork = fork();
-                wait(&status);
-                /* Child Process */
-                if (idfork == 0) {
-                        status = execvp(cmd, argument_list);
-                }
-                /* Parent Process */
-                else {
-                        fprintf(stderr, "+ completed '%s' ['%d']\n", cmd, status);
+                if(argc > 1) {
+                        strcpy(cmd,argv[1]);
+                        for(int i=2;i<argc;i++){
+                                strcat(cmd," ");
+                                strcat(cmd,argv[i]);
+                        }
+                        char* argument_list[] = {NULL};
+                        idfork = fork();
+                        wait(&status);
+                        /* Child Process */
+                        if (idfork == 0) {
+                                status = execvp(cmd, argument_list);
+                        }
+                        /* Parent Process */
+                        else {
+                                fprintf(stderr, "+ completed '%s' ['%d']\n", cmd, status);
+                        }
+                        break;
                 }
         }
 
