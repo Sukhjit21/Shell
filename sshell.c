@@ -13,7 +13,6 @@ int main(void)
 
         while (1) {
                 char *nl;
-                //int retval;
                 int status;
                 int idfork;
                 /* Print prompt */
@@ -33,23 +32,50 @@ int main(void)
                 nl = strchr(cmd, '\n');
                 if (nl)
                         *nl = '\0';
+                
 
                 /* Builtin command */
                 if (!strcmp(cmd, "exit")) {
                         fprintf(stderr, "Bye...\n");
                         break;
                 }
+                char cwd[256];
+                char* argv[CMDLINE_MAX];
+                int argc = 0;
+                char *token;
 
-
-                char* argument_list[] = {NULL};
-		idfork = fork();
-                wait(&status);
-                /*Child Process*/
-		if(idfork == 0){
-			status = execvp(cmd, argument_list);
+                token = strtok(cmd, " ");
+                while (token != NULL)
+                {
+                    argv[argc] = token;
+                    argc++;
+                    token = strtok(NULL, " ");
+                }
+                argv[argc] = NULL;
+                /*Builtin command for PWD */
+		if(!strcmp(cmd, "pwd")){
+			getcwd(cwd,sizeof(cwd));
+			printf("%s\n", cwd);
+                        fprintf(stderr, "+ completed 'pwd' [0]\n");	
+			continue;
 		}
+		if(!strcmp(cmd, "cd")){
+                        chdir(argv[1]);
+                        fprintf(stderr, "+ completed 'cd %s' [0]\n", argv[1]);
+                        continue;
+                }
+
+                idfork = fork();
+                /*Child Process*/
+                if(idfork == 0){
+                        status = execvp(argv[0], argv);
+                        /* execvp returns only if error occurs */
+                        printf("Error executing command: %s\n", argv[0]);
+                        exit(1);
+                }
                 /* Parent Process */
                 else{
+                        waitpid(idfork, &status, 0);
                         fprintf(stderr, "+ completed '%s' ['%d']\n",
                         cmd,status);
                 }
