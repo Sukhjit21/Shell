@@ -13,8 +13,8 @@ int changedirec(char *path[]);
 struct Arguments{
 	char *firstarg[CMDLINE_MAX]; // stores all the command line commands before >
 	char *secondarg[CMDLINE_MAX]; // stores all command line commands after >
-	char *thirdarg[CMDLINE_MAX]; 
-	int outputre; // if outputre = 0 then we do output redirection
+	int outputre; // if outputre = 1 then we do output redirection
+		      //
 };
 int outputredirect(struct Arguments s);
 int main(void)
@@ -48,28 +48,28 @@ int main(void)
                 /* Builtin command */
                 if (!strcmp(cmd, "exit")) {
                         fprintf(stderr, "Bye...\n");
+			fprintf(stderr, "+ completed 'exit' [0]\n");
                         break;
                 }
                 char cwd[256];
                 char* argv[CMDLINE_MAX];
                 int argc = 0;
                 char *token;
-		int xz = -1;
+		int xz = 0;
                 token = strtok(cmd, " ");
                 while (token != NULL)
                 {
 			if(!strcmp(token, ">")){
-				xz =0;
-				first.outputre = 0;
+				first.outputre = 1;
 				argc++;
 				token = strtok(NULL, " ");
 				continue;
 			}
-			if(first.outputre == 0){
+			else if(first.outputre == 1){
 				first.secondarg[xz] = token;
 			//	printf("First arg %s\n", first.secondarg[0]);
 				xz++;	
-				token = strtok(NULL, " ");
+			//	token = strtok(NULL, " ");
 				}
 			else{
 				first.firstarg[argc] = token;
@@ -93,15 +93,15 @@ int main(void)
 			continue;
 
                 }
-
                 idfork = fork();
                 /*Child Process*/
                 if(idfork == 0){
-			if(first.outputre == 0){
+			printf("output value %d" , first.outputre);
+			if(first.outputre == 1)
+			{
 				outputredirect(first);
+				status = execvp(first.firstarg[0], first.firstarg);
 				exit(0);	
-				//status = execvp(first.firstarg[0], first.firstarg);
-				//status = 0;
 			}
 			else{
 				status = execvp(first.firstarg[0], first.firstarg);
@@ -114,6 +114,7 @@ int main(void)
                 }
                 /* Parent Process */
                 else{
+			first.outputre = 0; // set to 0 so it does not run output redirection on next cmd
                         waitpid(idfork, &status, 0);
                         fprintf(stderr, "+ completed '%s' ['%d']\n",
                         cmd,status);
@@ -134,13 +135,11 @@ int changedirec(char *path[]){
 }
 int outputredirect(struct Arguments s){
 	int fd;
-	s.outputre = 1;
 	char filenam[70];
 	strcpy(filenam,s.secondarg[0]); 
 	printf("Made it ot file name '%s' ", filenam);
 	fd = open(filenam, O_WRONLY | O_CREAT,  0644);
 	dup2(fd, STDOUT_FILENO);
 	close(fd);
-	return(execvp(s.firstarg[0], s.firstarg));	
-	//return 1;
+	return 0;
 }
