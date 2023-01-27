@@ -108,7 +108,6 @@ int main(void)
                 }
                /* if (!strcmp(cmd, "pipe"))
                 {
-
                         piping(first);
                 } */
                 idfork = fork();
