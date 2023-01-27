@@ -4,7 +4,7 @@ Implementation of a simple shell
 adadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadad
 
 # Design Choices
-### Arguments
+### struct Arguments
 
 We used a struct named **Arguments** with four arrays to store the command line. 
 
@@ -26,3 +26,4 @@ Then there are three int variables that act as flags:
 keeps prompting the user for commands until they enter "exit". 
 - Otherwise, when the user enters a command, we parse it and set the \
 appropriate variables in the "Arguments" struct.
+- ***char token** checks
