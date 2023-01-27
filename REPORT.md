@@ -24,5 +24,5 @@ Then there are three int variables that act as flags:
 - We create a pointer to the struct Arguments called first
 - Next we implement an infinite while loop to print out the prompt "sshell", \
 keeps prompting the user for commands until they enter "exit". 
-- Otherwise, when the user enters a command, we parse it and set the 
+- Otherwise, when the user enters a command, we parse it and set the \
 appropriate variables in the "Arguments" struct.
