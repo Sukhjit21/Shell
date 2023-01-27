@@ -99,10 +99,6 @@ int main(void)
                         changedirec(first.firstarg);
                         continue;
                 }
-                if (!strcmp(cmd, "pipe"))
-                {
-                        piping(first);
-                }
                 idfork = fork();
                 /*Child Process*/
                 if (idfork == 0)
