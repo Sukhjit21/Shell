@@ -150,7 +150,7 @@ int main(void)
 			}
 			if (first.pipe > 0)
 			{
-				printf("fourth argus %s %s\n", first.fourtharg[0], first.fourtharg[1]);
+				
 				pipeline(first);
 				exit(0);
 			}
