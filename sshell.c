@@ -21,6 +21,7 @@ struct Arguments
 };
 int outputredirect(struct Arguments s);
 int pipeline(struct Arguments s);
+int pipeline2(struct Arguments s);
 int main(void)
 {
 	struct Arguments first;
@@ -153,7 +154,14 @@ int main(void)
 			if (first.pipe > 0)
 			{
 				// printf("fourth argus %s %s\n", first.fourtharg[0], first.fourtharg[1]);
-				pipeline(first);
+				if (first.pipe > 1)
+				{
+					pipeline2(first);
+				}
+				else
+				{
+					pipeline(first);
+				}
 				exit(0);
 			}
 			if (first.outputre != 0)
@@ -232,43 +240,7 @@ int outputredirect(struct Arguments s)
 	return 0;
 }
 
-// int piping(struct Arguments s)
-/*{
-		int fd[2];
-		pid_t pid = fork();
 
-		// create the pipe
-		if (pipe(fd) == -1) {
-				perror("pipe");
-				exit(EXIT_FAILURE);
-		}
-
-		if (pid == -1) {
-				perror("fork");
-				exit(EXIT_FAILURE);
-		}
-
-		if (pid == 0) {
-				 child process
-				close(fd[0]); // close the read end of the pipe
-				dup2(fd[1], STDOUT_FILENO); // redirect stdout to the write end of the pipe
-				close(fd[1]);
-				execlp("ls", "ls", "-l", NULL); // execute 'ls -l' command
-				perror("execlp");
-				exit(EXIT_FAILURE);
-		} else {
-				 parent process
-				close(fd[1]); // close the write end of the pipe
-				dup2(fd[0], STDIN_FILENO); // redirect stdin to the read end of the pipe
-				close(fd[0]);
-				execlp("grep", "grep", "^d", NULL); // execute 'grep ^d' command
-				perror("execlp");
-				exit(EXIT_FAILURE);
-		}
-
-		return 0;
-
-} */
 int pipeline(struct Arguments s)
 {
 	int fd[2];
@@ -293,5 +265,43 @@ int pipeline(struct Arguments s)
 
 		execvp(s.thirdarg[0], s.thirdarg);
 	}
+	return 0;
+}
+
+int pipeline2(struct Arguments s)
+{
+	int fd1[2], fd2[2];
+	pipe(fd1);
+	pipe(fd2);
+
+	if (fork() == 0)
+	{
+		// First child process
+		close(fd1[0]);
+		dup2(fd1[1], 1);
+		execvp(s.firstarg[0], s.firstarg);
+	}
+	else
+	{
+		if (fork() == 0)
+		{
+			// Second child process
+			close(fd1[1]);
+			close(fd2[0]);
+			dup2(fd1[0], 0);
+			dup2(fd2[1], 1);
+			execvp(s.thirdarg[0], s.thirdarg);
+		}
+		else
+		{
+			// Parent process
+			close(fd1[0]);
+			close(fd1[1]);
+			close(fd2[1]);
+			dup2(fd2[0], 0);
+			execvp(s.fourtharg[0], s.fourtharg);
+		}
+	}
+
 	return 0;
 }
