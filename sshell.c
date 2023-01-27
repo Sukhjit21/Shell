@@ -94,13 +94,13 @@ int main(void)
                 argv[argc] = NULL;
                 first.firstarg[argc] = NULL;
                 /*Builtin command for PWD */
-                if (!strcmp(cmd, "pwd"))
+                /* if (!strcmp(cmd, "pwd"))
                 {
                         getcwd(cwd, sizeof(cwd));
                         printf("%s\n", cwd);
                         fprintf(stderr, "+ completed 'pwd' [0]\n");
                         continue;
-                }
+                } */
                 if (!strcmp(cmd, "cd"))
                 {
                         changedirec(first.firstarg);
