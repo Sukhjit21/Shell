@@ -26,4 +26,8 @@ Then there are three int variables that act as flags:
 keeps prompting the user for commands until they enter "exit". 
 - Otherwise, when the user enters a command, we parse it and set the \
 appropriate variables in the "Arguments" struct.
-- ***char token** checks
+- **char *token** on line 71 checks if the command being parsed is valid, and if\
+so proceeds to execute the corresponding command using execvp() in a while \
+loop that will continue until we reach the end of the command line input.
+- Background processes are handled by forking, and we place a waitpid() call in \
+the parent process to suspend execution of the parent until the child returns.
