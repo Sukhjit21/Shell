@@ -6,8 +6,7 @@ adadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadad
 # Design Choices
 ### Arguments
 
-We used a struct named <mark>Arguments</mark> with four arrays to store the 
-command line. 
+We used a struct named **Arguments** with four arrays to store the command line. 
 
 1. char *firstarg[] stores the the command line commands before '>'
 2. char *secondarg[] stores the the command line commands after '>'
@@ -23,7 +22,7 @@ Then there are three int variables that act as flags:
 ### Main()
 
 - We create a pointer to the struct Arguments called first
-- Next we implement an infinite while loop to print out the prompt "sshell", \n
+- Next we implement an infinite while loop to print out the prompt "sshell", \
 keeps prompting the user for commands until they enter "exit". 
 - Otherwise, when the user enters a command, we parse it and set the 
 appropriate variables in the "Arguments" struct.
