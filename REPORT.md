@@ -23,7 +23,7 @@ Then there are three int variables that act as flags:
 ### Main()
 
 - We create a pointer to the struct Arguments called first
-- Next we implement an infinite while loop to print out the prompt "sshell", 
+- Next we implement an infinite while loop to print out the prompt "sshell", \n
 keeps prompting the user for commands until they enter "exit". 
 - Otherwise, when the user enters a command, we parse it and set the 
 appropriate variables in the "Arguments" struct.
