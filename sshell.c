@@ -99,6 +99,7 @@ int main(void)
                         changedirec(first.firstarg);
                         continue;
                 }
+                
                 idfork = fork();
                 /*Child Process*/
                 if (idfork == 0)
