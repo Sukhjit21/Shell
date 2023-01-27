@@ -20,6 +20,7 @@ int outputredirect(struct Arguments s);
 int main(void)
 {
         struct Arguments first;
+		first.outputre = 0;
         char cmd[CMDLINE_MAX];
 
         while (1)
@@ -114,6 +115,7 @@ int main(void)
                 /*Child Process*/
                 if (idfork == 0)
                 {
+					
                     if(!strcmp(cmd, "pwd")){
                         getcwd(cwd, sizeof(cwd));
                         printf("%s\n", cwd);
@@ -121,6 +123,7 @@ int main(void)
                 }
                     if (first.outputre != 0)
                     {
+						printf("made it here 2 \n");
                         outputredirect(first);
                         status = execvp(first.firstarg[0], first.firstarg);
                         exit(0);
