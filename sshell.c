@@ -68,6 +68,7 @@ int main(void)
 		int argc = 0;
 		char *token;
 		int xz = 0;
+		int xy = 0;
 		token = strtok(cmd, " ");
 		while (token != NULL)
 		{
@@ -105,7 +106,8 @@ int main(void)
 			{
 				if (first.pipe > 1)
 				{
-					first.fourtharg[xz] = token;
+					first.fourtharg[xy] = token;
+					xy++;
 				}
 				else
 				{
@@ -150,7 +152,7 @@ int main(void)
 			}
 			if (first.pipe > 0)
 			{
-				
+				// printf("fourth argus %s %s\n", first.fourtharg[0], first.fourtharg[1]);
 				pipeline(first);
 				exit(0);
 			}
