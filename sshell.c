@@ -20,7 +20,7 @@ struct Arguments
 	int pipe;		// if > 0 then pipeline
 };
 int outputredirect(struct Arguments s);
-void pipeline(struct Arguments s);
+int pipeline(struct Arguments s);
 int main(void)
 {
 	struct Arguments first;
@@ -269,7 +269,7 @@ int outputredirect(struct Arguments s)
 		return 0;
 
 } */
-void pipeline(struct Arguments s)
+int pipeline(struct Arguments s)
 {
 	int fd[2];
 	pipe(fd);
@@ -293,4 +293,5 @@ void pipeline(struct Arguments s)
 
 		execvp(s.thirdarg[0], s.thirdarg);
 	}
+	return 0;
 }
