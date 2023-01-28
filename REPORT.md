@@ -23,14 +23,14 @@ background tasks.
 
 - In this phase we just implemented the rest of the builtin commands. 
 - We checked the input line for the builtin commands, and wrote a series of \
-simple **if-else** statements to handle pwd, cd, etc. 
+simple *if-else* statements to handle pwd, cd, etc. 
 - Wrote a changedirec() function that takes the PATH as an input char array, \
- then implements the **cd** command and prints the status and path to **stderr**
+ then implements the *cd* command and prints the status and path to *stderr*
 
 ### Phase 4 - Output Redirection
 
 - To enable output redirection, we created the function int outputredirect() \
-that takes the **struct Argument** as the input parameter. We first have to \
+that takes the *struct Argument* as the input parameter. We first have to \
 check whether the output file that the user wants to redirect the output to \
 actually exists or not. If not, we print an error message and exit(1).
 - If no error occurs, and the first argument in the command line is not NULL, \
@@ -47,7 +47,7 @@ of piping commands, but ended up having numerous issues that led to the piping \
 commands not being executed by the shell.
 - In the end, we decided to write two functions, one that would run when there \
 was only one piping command, and another one to handle multiple pipes.
-- Both functions take **struct Argument** as the parameter, and create pipes \
+- Both functions take *struct Argument* as the parameter, and create pipes \
 between the different commands in the command line. However, in pipeline2(), \
 there are two file descriptors instead of just one in order to handle \
 multiple commands.
@@ -63,7 +63,7 @@ all background processes have terminated to print the completion message.
 # Code Design Choices
 ### struct Arguments
 
-We used a struct named **Arguments** with four arrays to store the command line. 
+We used a struct named *Arguments* with four arrays to store the command line. 
 - We decided to parse the command line into a struct instead of just treating \
 it like a std::string, in order to better split up and iterate through the \
 commands. This way, we can also implement flag variables to specift modes.
@@ -86,7 +86,7 @@ Then there are three int variables that act as flags:
 keeps prompting the user for commands until they enter "exit". 
 - Otherwise, when the user enters a command, we parse it and set the \
 appropriate variables in the "Arguments" struct.
-- **char *token** on line 71 checks if the command being parsed is valid, and if\
+- *char *token* on line 71 checks if the command being parsed is valid, and if\
 so proceeds to execute the corresponding command using execvp() in a while \
 loop that will continue until we reach the end of the command line input.
 - Background processes are handled by forking, and we place a waitpid() call in \
@@ -95,14 +95,14 @@ the parent process to suspend execution of the parent until the child returns.
 if error occurs. 
 
 ### int changedirec()
-- Called from main when the command is **cd**.
-- If a path is provided from the user, will implement the *chdir** command.
+- Called from main when the command is *cd*.
+- If a path is provided from the user, will implement the *chdir* command.
 - Else prints error message, then returns.
 
 ### int outputredirect()
 - Takes in the Argument struct as command line arguments.
 - Returns error if there is no secondary argument provided.
-- Will either call **O_TRUNC** or **O_APPEND** depending on usage mode, then \
+- Will either call *O_TRUNC* or *O_APPEND* depending on usage mode, then \
 calls dup2() on the file descriptor and closes the file.
 
 ### int pipeline() and int pipeline2()
