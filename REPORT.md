@@ -41,7 +41,7 @@ the output to the end of the file.
 
 ### Phase 5 - Piping
 
-- This was the phase we had the most trouble with. We tried to implement /
+- This was the phase we had the most trouble with. We tried to implement \
 a loop that operated as a general piping function that could handle any number \
 of piping commands, but ended up having numerous issues that led to the piping \
 commands not being executed by the shell.
