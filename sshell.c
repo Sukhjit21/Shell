@@ -21,6 +21,8 @@ struct Arguments
 };
 int outputredirect(struct Arguments s);
 int pipeline(struct Arguments s);
+int pipeline2(struct Arguments s);
+
 int main(void)
 {
 	struct Arguments first;
@@ -38,7 +40,7 @@ int main(void)
 		int status;
 		int idfork;
 		/* Print prompt */
-		printf("sshell$ ");
+		printf("sshell@ucd$ ");
 		fflush(stdout);
 
 		/* Get command line */
@@ -70,6 +72,7 @@ int main(void)
 		int xz = 0;
 		int xy = 0;
 		token = strtok(cmd, " ");
+		// parses command line arguments and puts them in global variables Struct
 		while (token != NULL)
 		{
 			const char ch = '&';
@@ -83,6 +86,7 @@ int main(void)
 			if (!strcmp(token, ">"))
 			{
 				first.outputre = 1;
+				argv[argc] = token;
 				argc++;
 				token = strtok(NULL, " ");
 				continue;
@@ -90,6 +94,7 @@ int main(void)
 			if (!strcmp(token, ">>"))
 			{
 				first.outputre = 2;
+				argv[argc] = token;
 				argc++;
 				token = strtok(NULL, " ");
 				continue;
@@ -98,6 +103,7 @@ int main(void)
 			{
 
 				first.pipe++;
+				argv[argc] = token;
 				argc++;
 				token = strtok(NULL, " ");
 				continue;
@@ -118,19 +124,16 @@ int main(void)
 			else if ((first.outputre == 1) || (first.outputre == 2))
 			{
 				first.secondarg[xz] = token;
-				//	printf("First arg %s\n", first.secondarg[0]);
 				xz++;
-				//	token = strtok(NULL, " ");
 			}
 			else
 			{
 				first.firstarg[argc] = token;
-				argv[argc] = token;
 			}
+			argv[argc] = token;
 			argc++;
 			token = strtok(NULL, " ");
 		}
-		// strcpy(first.firstarg, argv[3]);
 		argv[argc] = NULL;
 		first.firstarg[argc] = NULL;
 		/*Builtin command for CD */
@@ -152,8 +155,15 @@ int main(void)
 			}
 			if (first.pipe > 0)
 			{
-				printf("fourth argus %s %s\n", first.fourtharg[0], first.fourtharg[1]);
-				status = pipeline(first);
+				// printf("fourth argus %s %s\n", first.fourtharg[0], first.fourtharg[1]);
+				if (first.pipe > 1)
+				{
+					pipeline2(first);
+				}
+				else
+				{
+					pipeline(first);
+				}
 				exit(0);
 			}
 			if (first.outputre != 0)
@@ -165,7 +175,7 @@ int main(void)
 			else
 			{
 				status = execvp(first.firstarg[0], first.firstarg);
-				printf("Error executing command: %s\n", argv[0]);
+				// printf("Error executing command: %s\n", argv[0]);
 				exit(1);
 			}
 		}
@@ -180,19 +190,32 @@ int main(void)
 			waitpid(idfork, &status, 0);
 			if (status == 0)
 			{
+				char res[CMDLINE_MAX] = "";
+				for (int i = 0; i < argc; i++)
+				{
+					strcat(res, argv[i]);
+					if (i == (argc - 1))
+					{
+						if (first.background == 1)
+						{
+							strcat(res, "&");
+						}
+						break; // break so we not add space at the end of the string
+					}
+					else
+					{
+						strcat(res, " ");
+					}
+				}
+
 				fprintf(stderr, "+ completed '%s' [%d]\n",
-						cmd, status);
+						res, status);
 			}
-			/*else
+			else
 			{
 				printf("Error executing command: %s\n", argv[0]);
-			}*/
+			}
 		}
-		/*else
-		{
-			//printf("asdasd %s\n", first.firstarg[1]);
-			continue;
-		} */
 	}
 
 	return EXIT_SUCCESS;
@@ -218,6 +241,11 @@ int outputredirect(struct Arguments s)
 		fprintf(stderr, "Error: No output file \n");
 		exit(1);
 	}
+	if (s.firstarg[0] == NULL)
+	{
+		fprintf(stderr, "Error: missing command \n");
+		exit(1);
+	}
 	strcpy(filenam, s.secondarg[0]);
 	if (s.outputre == 2)
 	{
@@ -231,49 +259,11 @@ int outputredirect(struct Arguments s)
 	close(fd);
 	return 0;
 }
-
-// int piping(struct Arguments s)
-/*{
-		int fd[2];
-		pid_t pid = fork();
-
-		// create the pipe
-		if (pipe(fd) == -1) {
-				perror("pipe");
-				exit(EXIT_FAILURE);
-		}
-
-		if (pid == -1) {
-				perror("fork");
-				exit(EXIT_FAILURE);
-		}
-
-		if (pid == 0) {
-				 child process
-				close(fd[0]); // close the read end of the pipe
-				dup2(fd[1], STDOUT_FILENO); // redirect stdout to the write end of the pipe
-				close(fd[1]);
-				execlp("ls", "ls", "-l", NULL); // execute 'ls -l' command
-				perror("execlp");
-				exit(EXIT_FAILURE);
-		} else {
-				 parent process
-				close(fd[1]); // close the write end of the pipe
-				dup2(fd[0], STDIN_FILENO); // redirect stdin to the read end of the pipe
-				close(fd[0]);
-				execlp("grep", "grep", "^d", NULL); // execute 'grep ^d' command
-				perror("execlp");
-				exit(EXIT_FAILURE);
-		}
-
-		return 0;
-
-} */
-/*void pipeline(struct Arguments s)
+// pipeline for two commands
+int pipeline(struct Arguments s)
 {
 	int fd[2];
 	pipe(fd);
-
 	if (fork() != 0)
 	{
 		close(fd[0]);
@@ -293,54 +283,43 @@ int outputredirect(struct Arguments s)
 
 		execvp(s.thirdarg[0], s.thirdarg);
 	}
-} */
-
-int pipeline(struct Arguments s)
+	return 0;
+}
+// Pipeline2 for three commands
+int pipeline2(struct Arguments s)
 {
-	int fd1[2], fd2[2]; // Two pipes
+	int fd1[2], fd2[2];
+	pipe(fd1);
+	pipe(fd2);
 
-	if (pipe(fd1) == -1)
+	if (fork() == 0)
 	{
-		perror("pipe1 failed");
-		exit(EXIT_FAILURE);
-	}
-
-	if (pipe(fd2) == -1)
-	{
-		perror("pipe2 failed");
-		exit(EXIT_FAILURE);
-	}
-
-	if (!fork())
-	{ // First child process
+		// First child process
 		close(fd1[0]);
 		dup2(fd1[1], 1);
-		close(fd1[1]);
 		execvp(s.firstarg[0], s.firstarg);
 	}
-
-	if (!fork())
-	{ // Second child process
-		close(fd1[1]);
-		close(fd2[0]);
-		dup2(fd1[0], 0);
-		dup2(fd2[1], 1);
-		close(fd1[0]);
-		close(fd2[1]);
-		execvp(s.thirdarg[0], s.thirdarg);
+	else
+	{
+		if (fork() == 0)
+		{
+			// Second child process
+			close(fd1[1]);
+			close(fd2[0]);
+			dup2(fd1[0], 0);
+			dup2(fd2[1], 1);
+			execvp(s.thirdarg[0], s.thirdarg);
+		}
+		else
+		{
+			// Parent process
+			close(fd1[0]);
+			close(fd1[1]);
+			close(fd2[1]);
+			dup2(fd2[0], 0);
+			execvp(s.fourtharg[0], s.fourtharg);
+		}
 	}
 
-	if (!fork())
-	{ // Third child process
-		close(fd2[1]);
-		dup2(fd2[0], 0);
-		close(fd2[0]);
-		execvp(s.fourtharg[0], s.fourtharg);
-	}
-
-	close(fd1[0]);
-	close(fd1[1]);
-	close(fd2[0]);
-	close(fd2[1]);
 	return 0;
 }
