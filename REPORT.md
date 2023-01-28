@@ -95,20 +95,41 @@ the parent process to suspend execution of the parent until the child returns.
 if error occurs. 
 
 ### int changedirec()
+
 - Called from main when the command is *cd*.
 - If a path is provided from the user, will implement the *chdir* command.
 - Else prints error message, then returns.
 
 ### int outputredirect()
+
 - Takes in the Argument struct as command line arguments.
 - Returns error if there is no secondary argument provided.
 - Will either call *O_TRUNC* or *O_APPEND* depending on usage mode, then \
 calls dup2() on the file descriptor and closes the file.
 
 ### int pipeline() and int pipeline2()
+
 - We created two pipeline functions in order to facilitate multiple piping calls
 - Calls fork, creates the parent and child processes.
 - pipeline() handles only one piping call, while pipeline2() handles more than 1.
+
+# Reflection
+
+### Difficulties and Challenges
+- While developing this shell, we ran into numerous challenges:
+1. We had problems implementing background processes. For example, when we use \
+the sleep command, the 'completed' status message would not properly display \
+the *&* at the end of the command. 
+2. Another issue we had was trying to process multiple arguments. The issue \
+lay in the fact that we tried to use an array first to store the command \
+line arguments, but switching to a struct object helped to solve that problem.
+3. Our biggest challenge was definitely on how to implement piping. We looked \
+various resources, including the one cited below, in order to figure out how \
+best to allow for multiple piping calls. Implementing a single call was \
+relatively simple, but chaining piping commands together proved to be rather \
+difficult. In the end, we resolved this by writing two helper functions to \
+handle the chained piping calls. 
+
 
 # Sources
 - [Multiple pipe implementation reference from stackoverflow](https://stackoverflow.com/questions/8389033/implementation-of-multiple-pipes-in-c)
