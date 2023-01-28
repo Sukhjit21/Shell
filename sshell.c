@@ -198,6 +198,10 @@ int main(void)
 					strcat(res, argv[i]);
 					if (i == (argc - 1))
 					{
+						if (first.background == 1)
+						{
+							strcat(res, "&");
+						}
 						break;
 					}
 					else
