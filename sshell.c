@@ -40,7 +40,7 @@ int main(void)
 		int status;
 		int idfork;
 		/* Print prompt */
-		printf("sshell$ ");
+		printf("sshell@ucd$ ");
 		fflush(stdout);
 
 		/* Get command line */
