@@ -1,12 +1,45 @@
 # Project1
-Implementation of a simple shell 
+**Implementation of a simple shell**
 
 adadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadad
+
+# Development Process
+### Phase 1:
+
+- For this first phase, we just created a simple while loop in main() that uses \
+fork(), execvp(), and wait() instead of system().
+- The shell then prints out the completed exit statys to stderr.
+
+### Phase 2:
+
+- To handle command line arguments, we had to parse the input into multiple \
+commands. Initially, we created a *char array to store the arguments, then ran \
+through the list to execute each command. However, this approach proved to be \
+suboptimal, and oftentimes we would run into errors when trying to implement \
+multiple commands. 
+- Later on, we switched to a struct to handle the input arguments. This is the \
+design we are currently, which allows us to isolate each command on its own \
+in order to handle more complex commands, such as multiple pipelines and \
+background tasks.
+
+### Phase 3
+
+- In this phase we just implemented the rest of the builtin commands. 
+- We checked the input line for the builtin commands, and wrote a series of \
+simple **if-else** statements to handle pwd, cd, etc. 
+
+### Phase 4
+
+- 
+
 
 # Design Choices
 ### struct Arguments
 
 We used a struct named **Arguments** with four arrays to store the command line. 
+- We decided to parse the command line into a struct instead of just treating \
+it like a std::string, in order to better split up and iterate through the \
+commands. This way, we can also implement flag variables to specift modes.
 
 1. char *firstarg[] stores the the command line commands before '>'
 2. char *secondarg[] stores the the command line commands after '>'
