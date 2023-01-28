@@ -72,6 +72,7 @@ int main(void)
 		int xz = 0;
 		int xy = 0;
 		token = strtok(cmd, " ");
+		// parses command line arguments and puts them in global variables Struct
 		while (token != NULL)
 		{
 			const char ch = '&';
@@ -123,9 +124,7 @@ int main(void)
 			else if ((first.outputre == 1) || (first.outputre == 2))
 			{
 				first.secondarg[xz] = token;
-				//	printf("First arg %s\n", first.secondarg[0]);
 				xz++;
-				//	token = strtok(NULL, " ");
 			}
 			else
 			{
@@ -135,7 +134,6 @@ int main(void)
 			argc++;
 			token = strtok(NULL, " ");
 		}
-		// strcpy(first.firstarg, argv[3]);
 		argv[argc] = NULL;
 		first.firstarg[argc] = NULL;
 		/*Builtin command for CD */
@@ -177,7 +175,7 @@ int main(void)
 			else
 			{
 				status = execvp(first.firstarg[0], first.firstarg);
-				printf("Error executing command: %s\n", argv[0]);
+				// printf("Error executing command: %s\n", argv[0]);
 				exit(1);
 			}
 		}
@@ -202,7 +200,7 @@ int main(void)
 						{
 							strcat(res, "&");
 						}
-						break;
+						break; // break so we not add space at the end of the string
 					}
 					else
 					{
@@ -213,16 +211,11 @@ int main(void)
 				fprintf(stderr, "+ completed '%s' [%d]\n",
 						res, status);
 			}
-			/*else
+			else
 			{
 				printf("Error executing command: %s\n", argv[0]);
-			}*/
+			}
 		}
-		/*else
-		{
-			//printf("asdasd %s\n", first.firstarg[1]);
-			continue;
-		} */
 	}
 
 	return EXIT_SUCCESS;
@@ -266,12 +259,11 @@ int outputredirect(struct Arguments s)
 	close(fd);
 	return 0;
 }
-
+// pipeline for two commands
 int pipeline(struct Arguments s)
 {
 	int fd[2];
 	pipe(fd);
-
 	if (fork() != 0)
 	{
 		close(fd[0]);
@@ -293,7 +285,7 @@ int pipeline(struct Arguments s)
 	}
 	return 0;
 }
-
+// Pipeline2 for three commands
 int pipeline2(struct Arguments s)
 {
 	int fd1[2], fd2[2];
