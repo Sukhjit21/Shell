@@ -79,7 +79,7 @@ Then there are three int variables that act as flags:
 2. int background: stores 1 if its a background process
 3. int pipe: if this variable is > 0, then executes pipe
 
-### int main(void)
+### int main()
 
 - We create a pointer to the struct Arguments called first
 - Next we implement an infinite while loop to print out the prompt "sshell", \
@@ -94,18 +94,18 @@ the parent process to suspend execution of the parent until the child returns.
 - Will print completed process after returning, and also prints error message \
 if error occurs. 
 
-### int changedirec(char *path[])
+### int changedirec()
 - Called from main when the command is **cd**.
 - If a path is provided from the user, will implement the *chdir** command.
 - Else prints error message, then returns.
 
-### int outputredirect(struct Arguments s)
+### int outputredirect()
 - Takes in the Argument struct as command line arguments.
 - Returns error if there is no secondary argument provided.
 - Will either call **O_TRUNC** or **O_APPEND** depending on usage mode, then \
 calls dup2() on the file descriptor and closes the file.
 
-### int pipeline(struct Arguments s) and int pipeline2(struct Arguments s)
+### int pipeline() and int pipeline2()
 - We created two pipeline functions in order to facilitate multiple piping calls
 - Calls fork, creates the parent and child processes.
 - pipeline() handles only one piping call, while pipeline2() handles more than 1.
