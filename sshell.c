@@ -22,6 +22,7 @@ struct Arguments
 int outputredirect(struct Arguments s);
 int pipeline(struct Arguments s);
 int pipeline2(struct Arguments s);
+
 int main(void)
 {
 	struct Arguments first;
@@ -84,6 +85,7 @@ int main(void)
 			if (!strcmp(token, ">"))
 			{
 				first.outputre = 1;
+				argv[argc] = token;
 				argc++;
 				token = strtok(NULL, " ");
 				continue;
@@ -91,6 +93,7 @@ int main(void)
 			if (!strcmp(token, ">>"))
 			{
 				first.outputre = 2;
+				argv[argc] = token;
 				argc++;
 				token = strtok(NULL, " ");
 				continue;
@@ -99,6 +102,7 @@ int main(void)
 			{
 
 				first.pipe++;
+				argv[argc] = token;
 				argc++;
 				token = strtok(NULL, " ");
 				continue;
@@ -126,8 +130,8 @@ int main(void)
 			else
 			{
 				first.firstarg[argc] = token;
-				argv[argc] = token;
 			}
+			argv[argc] = token;
 			argc++;
 			token = strtok(NULL, " ");
 		}
@@ -188,8 +192,22 @@ int main(void)
 			waitpid(idfork, &status, 0);
 			if (status == 0)
 			{
+				char res[CMDLINE_MAX] = "";
+				for (int i = 0; i < argc; i++)
+				{
+					strcat(res, argv[i]);
+					if (i == (argc - 1))
+					{
+						break;
+					}
+					else
+					{
+						strcat(res, " ");
+					}
+				}
+
 				fprintf(stderr, "+ completed '%s' [%d]\n",
-						cmd, status);
+						res, status);
 			}
 			/*else
 			{
@@ -226,6 +244,11 @@ int outputredirect(struct Arguments s)
 		fprintf(stderr, "Error: No output file \n");
 		exit(1);
 	}
+	if (s.firstarg[0] == NULL)
+	{
+		fprintf(stderr, "Error: missing command \n");
+		exit(1);
+	}
 	strcpy(filenam, s.secondarg[0]);
 	if (s.outputre == 2)
 	{
@@ -239,7 +262,6 @@ int outputredirect(struct Arguments s)
 	close(fd);
 	return 0;
 }
-
 
 int pipeline(struct Arguments s)
 {
