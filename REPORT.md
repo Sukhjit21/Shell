@@ -1,7 +1,5 @@
 # Project1 - **Implementation of a simple shell**
 
-adadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadadad
-
 # Development Process
 ### Phase 1 - Fork, Execvp, Wait
 
