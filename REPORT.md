@@ -31,10 +31,38 @@ simple **if-else** statements to handle pwd, cd, etc.
 
 ### Phase 4 - Output Redirection
 
-- 
+- To enable output redirection, we created the function int outputredirect() \
+that takes the **struct Argument** as the input parameter. We first have to \
+check whether the output file that the user wants to redirect the output to \
+actually exists or not. If not, we print an error message and exit(1).
+- If no error occurs, and the first argument in the command line is not NULL, \
+then we can start to redirect the output. We append the output to the file \
+if that file already exists, otherwise we create a new file. The user can \
+also specify whether they want to overwrite the file, or to simply append \
+the output to the end of the file.
 
+### Phase 5 - Piping
 
-# Design Choices
+- This was the phase we had the most trouble with. We tried to implement /
+a loop that operated as a general piping function that could handle any number \
+of piping commands, but ended up having numerous issues that led to the piping \
+commands not being executed by the shell.
+- In the end, we decided to write two functions, one that would run when there \
+was only one piping command, and another one to handle multiple pipes.
+- Both functions take **struct Argument** as the parameter, and create pipes \
+between the different commands in the command line. However, in pipeline2(), \
+there are two file descriptors instead of just one in order to handle \
+multiple commands.
+
+### Phase 6 - Extra Features
+
+- We made the necessary changes so that the user can append to the end of \
+the file when redirecting the output rather than truncate the content.
+- We also needed to implement background processing, which is done through \
+waitpid(). We call this in the parent process in main(), and wait until \
+all background processes have terminated to print the completion message.
+
+# Code Design Choices
 ### struct Arguments
 
 We used a struct named **Arguments** with four arrays to store the command line. 
@@ -85,6 +113,6 @@ calls dup2() on the file descriptor and closes the file.
 - pipeline() handles only one piping call, while pipeline2() handles more than 1.
 
 # Sources
-- [Multiple pipe implementation reference](https://stackoverflow.com/questions/8389033/implementation-of-multiple-pipes-in-c)
+- [Multiple pipe implementation reference from stackoverflow](https://stackoverflow.com/questions/8389033/implementation-of-multiple-pipes-in-c)
 - [GNU C Library](https://www.gnu.org/software/libc/manual/)
 - Lecture slides
